@@ -5,12 +5,12 @@ export interface ResponseData {
     "message": string,
     "ok": boolean
 }
-//提交订单接口返回的数据的ts类型
+
 export interface SubmitOrder extends ResponseData {
     data: number
 }
 
-//订单详情数据的ts类型
+
 export interface OrderInfo {
     "id": number,
     "createTime": string,
@@ -41,7 +41,6 @@ export interface OrderInfo {
     "orderStatus": number
 }
 
-//定义订单接口返回的数据ts类型
 export interface OrderResponseData extends ResponseData {
     data: OrderInfo
 }

@@ -38,15 +38,12 @@
 
 <script setup lang="ts">
 import { ArrowDown } from "@element-plus/icons-vue";
-//引入路由器
 import { useRouter } from "vue-router";
-//获取user仓库的数据( visiable)可以控制login组件的对话框显示与隐藏
 import useUserStore from "@/store/modules/user";
 let userStore = useUserStore();
 
 let $router = useRouter();
 const goHome = () => {
-  //编程式导航跳转到首页
   $router.push({ path: "/home" });
 };
 //点击登录与注册按钮的时候弹出对话框
@@ -55,13 +52,10 @@ const login = () => {
 };
 //退出登录按钮的回调
 const logout = () => {
-  //通知pinia仓库清除用户相关的信息
   userStore.logout();
-  //编程式导航路由跳转到首页
   $router.push({ path: "/home" });
 };
 
-//点击顶部下拉菜单进行路由跳转
 const goUser = (path: string) => {
   $router.push({ path: path });
 };

@@ -62,12 +62,9 @@ let $emit = defineEmits(["changeScene",'removeUser']);
 
 //相应就诊人组件修改按钮的回调
 const handler = () => {
-  //要么是就诊人管理模块点击修改按钮
-  //要么预约挂号点击修改按钮
   if ($route.path == "/user/patient") {
     $emit("changeScene", props.user);
   } else {
-    //路由跳转携带参数
     $router.push({ path: "/user/patient", query: { type: "edit", id: props.user.id } });
   }
 };
@@ -75,9 +72,7 @@ const handler = () => {
 //删除某一个用户
 const removeUser = async () => {
   try {
-    //删除用户成功
     await reqRemoveUser(props.user.id);
-    //消息提示
     ElMessage({
       type:'success',
       message:'删除成功'

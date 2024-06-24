@@ -157,13 +157,9 @@ let $route = useRoute();
 let $router = useRouter();
 //@ts-ignore
 import { ElMessage } from "element-plus";
-//存储全部就诊人的信息
 let userArr = ref<UserArr>([]);
-//定义一个响应式数据:决定卡片的身体部分的展示内容
 let scene = ref<number>(0);
-//存储证件类型的数据
 let certationArr = ref<CertationArr>([]);
-//收集新增就诊人的数据
 let userParams = reactive<AddOrUpdateUser>({
   name: "",
   certificatesType: "",
@@ -182,11 +178,8 @@ let userParams = reactive<AddOrUpdateUser>({
 });
 //组件挂载完毕获取一次就诊人的信息
 onMounted(() => {
-  //获取就诊人信息
   getAllUser();
-  //获取证件的类型的数据
   getCertationType();
-  //判断:当前这个路由组件是不是从挂号组件而来[挂号组件而来,路径上是携带query参数type=add]
   if ($route.query.type == "add") {
     scene.value = 1;
   }
@@ -204,15 +197,12 @@ const getAllUser = async () => {
 };
 //添加就诊人按钮的回调
 const addUser = () => {
-  //清空上一次的数据
   reset();
-  //切换场景为1
   scene.value = 1;
 };
 //就诊人子组件自定义事件的回调
 const changeScene = (user: AddOrUpdateUser) => {
   scene.value = 1;
-  //收集已有的就诊人信息
   Object.assign(userParams, user);
 };
 
@@ -243,13 +233,10 @@ const getCertationType = async () => {
   }
 };
 
-//级联选择器数据
 const props: CascaderProps = {
-  lazy: true, //懒加载数据
-  //加载级联选择器数据方法
+  lazy: true,
   async lazyLoad(node: any, resolve: any) {
     let result: any = await reqCity(node.data.id || "86");
-    //整理数据
     let showData = result.data.map((item: any) => {
       return {
         id: item.id,
@@ -258,23 +245,17 @@ const props: CascaderProps = {
         leaf: !item.hasChildren,
       };
     });
-    //注入组件需要展示的数据
     resolve(showData);
   },
 };
 
-//提交按钮的方法的回调
 const submit = async () => {
-  //要么新增就诊人|更新一个已有的就诊人
   try {
-    //要么新增用户成功|更新已有的用户成功
     await reqAddOrUpdateUser(userParams);
-    //提示文字
     ElMessage({
       type: "success",
       message: userParams.id ? "更新成功" : "新增成功",
     });
-    //提交按钮的时候判断是不是从预约挂号而来
     if ($route.query.type) {
       $router.back();
     } else {
@@ -305,7 +286,6 @@ watch(
 
 //子组件自定义事件:删除按钮触发
 const removeUser = ()=>{
-  //再次获取全部的就诊人的信息
    getAllUser();
 }
 </script>

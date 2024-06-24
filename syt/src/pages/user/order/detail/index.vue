@@ -157,22 +157,16 @@ import { useRoute } from "vue-router";
 import type { PayReslt, OrderResponseData, QrCode } from "@/api/user/type";
 //@ts-ignore
 import { ElMessage } from "element-plus";
-//生成二维码插件qrcode
 //@ts-ignore
 import QRCode from "qrcode";
 let $route = useRoute();
-//定义存储二维码图片路径
 let imgUrl = ref<string>("");
-//控制对话框显示与隐藏的数据
 let dialogVisible = ref<boolean>(false);
 let orderInfo = ref<any>({});
-//存储定时器引用
 let timer = ref<any>();
-//组件挂载完毕
 onMounted(() => {
   getOrderInfo();
 });
-//获取订单详情的数据
 const getOrderInfo = async () => {
   let result: OrderResponseData = await reqOrderInfo($route.query.orderId as string);
   if (result.code == 200) {
@@ -183,9 +177,7 @@ const getOrderInfo = async () => {
 //取消订单   订单状态有三种 orderStatus  -1  取消预约  0 预约但是没有支付  1 支付成功
 const cancel = async () => {
   try {
-    //取消预约成功
     await reqCancelOrder($route.query.orderId as string);
-    //再次获取订单详情的数据
     getOrderInfo();
   } catch (error) {
     ElMessage({
@@ -197,38 +189,27 @@ const cancel = async () => {
 
 //点击支付按钮的回调
 const openDialog = async () => {
-  //展示对话框
   dialogVisible.value = true;
-  //获取支付需要使用二维码信息
   let result: QrCode = await reqQrcode($route.query.orderId as string);
-  //更具服务器返回二维码信息生成二维码图片
   imgUrl.value = await QRCode.toDataURL(result.data.codeUrl);
-  //询问服务器当前这笔交易的支付结果
-  //只要二维码查来:需要每隔几秒询问服务器是否支付成功
+  
 
   timer.value = setInterval(async () => {
     let result: PayReslt = await reqQueryPayState($route.query.orderId as string);
-    //如果服务器返回的数据data:true,代表支付成功
     if (result.data) {
-      //关闭对话框
       dialogVisible.value = false;
-      //提示信息
       ElMessage({
         type: "success",
         message: "支付成功",
       });
-      //清除定时器
       clearInterval(timer.value);
-      //再次获取订单详情的数据
       getOrderInfo();
     }
   }, 2000);
 };
-//关闭窗口的回调
+
 const closeDialog = () => {
-  //关闭对话框,对话框隐藏
   dialogVisible.value = false;
-  //清除定时器
   clearInterval(timer.value);
 };
 //对话框右上角关闭的叉子的回调

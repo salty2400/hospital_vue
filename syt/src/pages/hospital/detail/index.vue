@@ -84,9 +84,7 @@ let hospitalStore = useDetailStore();
       line-height: 30px;
       letter-spacing: 1px;
 
-      // div {
-      //   margin: 10px 0px;
-      // }
+   
     }
   }
   .footer {

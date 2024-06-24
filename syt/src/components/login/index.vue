@@ -151,17 +151,14 @@
 </template>
 
 <script setup lang="ts">
-//引入wx扫码登录参数请求
 import { reqWxLogin } from "@/api/hospital";
 //@ts-ignore
 import { ElMessage } from "element-plus";
-//引入倒计时组件
 import CountDown from "../countdown/index.vue";
 import { ref, reactive, computed, watch } from "vue";
 import { User, Lock } from "@element-plus/icons-vue";
 import type { WXLoginResponseData } from "@/api/hospital/type";
 import {useRouter,useRoute} from 'vue-router';
-//获取user仓库的数据( visiable)可以控制login组件的对话框显示与隐藏
 import useUserStore from "@/store/modules/user";
 let userStore = useUserStore();
 //获取路由器对象
@@ -169,53 +166,42 @@ let $router = useRouter();
 let $route = useRoute()
 
 //定义一个响应式数据控制倒计时组件显示与隐藏
-let flag = ref<boolean>(false); //flag如果为真,开启倒计时  flag:为假的并非倒计时
-let scene = ref<number>(0); //0代表收集号码登录  如果是1 微信扫码登录
+let flag = ref<boolean>(false);
+let scene = ref<number>(0);
 //获取form组件实例
 let form = ref<any>();
 //收集表单数据---手机号码
 let loginParam = reactive({
-  phone: "", //收集手机号码
-  code: "", //收集验证码
+  phone: "", 
+  code: "", 
 });
 //计算出当前表单元素收集的内容是否手机号码格式
 let isPhone = computed(() => {
-  //手机号码正则表达式
   const reg = /^1((34[0-8])|(8\d{2})|(([35][0-35-9]|4[579]|66|7[35678]|9[1389])\d{1}))\d{7}$/;
-  //返回布尔值:真代表手机号码、假代表的即为不是手机号码
   return reg.test(loginParam.phone);
 });
 //点击微信扫码登录|微信小图标切换为微信扫码登录
 const changeScene = async () => {
-  //切换场景为1
   scene.value = 1;
-  //发请求获取微信扫码二维码需要参数
-  //咱们在想硅谷学校的服务器发请求,获取微信扫码登录页面参数
-  //还需要携带一个参数:告诉学校服务器用户授权成功以后重定向项目某一个页面
   let redirect_URL = encodeURIComponent(window.location.origin + "/wxlogin");
   let result: WXLoginResponseData = await reqWxLogin(redirect_URL);
-  //生成微信扫码登录二维码页面
   //@ts-ignore
   new WxLogin({
-    self_redirect: true, //true:手机点击确认登录后可以在 iframe 内跳转到 redirect_uri
-    id: "login_container", //显示二维码容器设置
-    appid: result.data.appid, //应用位置标识appid
-    scope: "snsapi_login", //当前微信扫码登录页面已经授权了
-    redirect_uri: result.data.redirectUri, //填写授权回调域路径,就是用户授权成功以后，微信服务器向公司后台推送code地址
-    state: result.data.state, //state就是学校服务器重定向的地址携带用户信息
+    self_redirect: true, 
+    id: "login_container", 
+    appid: result.data.appid, 
+    scope: "snsapi_login", 
+    redirect_uri: result.data.redirectUri, 
+    state: result.data.state,
     style: "black",
     href: "",
   });
 };
 //获取验证码按钮的回调
 const getCode = async () => {
-  //解决element-plus按钮禁用还能点击的问题
   if (!isPhone.value || flag.value) return;
-  //开启倒计时模式,倒计时组件显示出来
   flag.value = true;
-  //通知pinia仓库存储验证码
   try {
-    //获取验证码成功
     await userStore.getCode(loginParam.phone);
     loginParam.code = userStore.code;
   } catch (error) {
@@ -226,8 +212,7 @@ const getCode = async () => {
   }
 };
 
-//计数器子组件绑定的自定义事件
-//当倒计时为零的时候,通知父组件倒计时组件隐藏
+
 const getFlag = (val: boolean) => {
   //倒计时模式结束
   flag.value = val;
@@ -237,15 +222,9 @@ const getFlag = (val: boolean) => {
 const login = async () => {
   //保证表单校验两项都复合条件
   await form.value.validate();
-  //发起登录请求
-  //登录请求成功:顶部组件需要展示用户名字、对话框关闭
-  //登录请求失败:弹出对应登录失败的错误信息
   try {
-    //用户登录成功
     await userStore.userLogin(loginParam);
-    //关闭对话框
     userStore.visiable = false;
-    //获取url的query参数
     let redirect = $route.query.redirect;
     if(redirect){
       $router.push(redirect as string);
@@ -262,9 +241,6 @@ const login = async () => {
 
 //自定义校验规则:手机号码自定义校验规则
 const validatorPhone = (rule: any, value: any, callBack: any) => {
-  //rule:即为表单校验规则对象
-  //value:即为当前文本的内容
-  //callBack:回调函数
   const reg = /^1((34[0-8])|(8\d{2})|(([35][0-35-9]|4[579]|66|7[35678]|9[1389])\d{1}))\d{7}$/;
   if (reg.test(value)) {
     callBack();
@@ -274,9 +250,6 @@ const validatorPhone = (rule: any, value: any, callBack: any) => {
 };
 //验证码自定义校验规则
 const validatorCode = (rule: any, value: any, callBack: any) => {
-  //rule:即为表单校验规则对象
-  //value:即为当前文本的内容
-  //callBack:回调函数
   if (/^\d{6}$/.test(value)) {
     callBack();
   } else {
@@ -285,15 +258,6 @@ const validatorCode = (rule: any, value: any, callBack: any) => {
 };
 //表单校验的规则对象
 const rules = {
-  //手机号码校验规则
-  //required:代表当前字段务必进行校验
-  //message:代表的校验错误的提示信息
-  //trigger:代表表单校验触发的时机  change:文本发生变化的时候进行校验  blur:失却焦点的时候触发校验
-  //min:代表的是最小位数
-  //max:代表的是最大的位置
-  // phone: [{ required: true, message: "手机号码务必11位", trigger: "change", min: 11 }],
-  // code: [{ required: true, message: "验证码务必6位", trigger: "blur", min: 6 }],
-
   phone: [{ trigger: "change", validator: validatorPhone }],
   code: [{ trigger: "change", validator: validatorCode }],
 };

@@ -72,10 +72,6 @@
         <el-input placeholder="请输入证件号码" v-model="params.certificatesNo"></el-input>
       </el-form-item>
       <el-form-item label="上传证件" prop="certificatesUrl">
-        <!-- action:upload组件向服务器提交图片路径
-             limit:照片墙约束图片个数
-             on-exceed:超出约束数量的钩子
-        -->
         <el-upload
           ref="upload"
           list-type="picture-card"
@@ -143,9 +139,7 @@ let params = reactive<UserParams>({
 });
 //组件挂载完毕
 onMounted(() => {
-  //获取用户信息的方法
   getUserInfo();
-  //获取证件类型的接口
   getType();
 });
 //获取用户信息方法
@@ -172,17 +166,12 @@ const exceedhandler = () => {
 };
 //图品上传成功的钩子
 const successhandler = (response: any) => {
-  //如果图片上传成功校验结果清除
   form.value.clearValidate('certificatesUrl');
-  //收集上传成功图片地址
-  //response:上传图片请求服务器返回的数据
-  //uploadFile上传文件对象
   params.certificatesUrl = response.data;
 };
 
 //照片墙预览的钩子
 const handlePictureCardPreview = () => {
-  //触发预览的钩子的时候，对话框显示
   dialogVisible.value = true;
 };
 
@@ -193,9 +182,7 @@ const handleRemove = () => {
 
 //重写按钮的回调
 const reset = () => {
-  //清除文件上传列表
   upload.value.clearFiles();
-  //清空数据
   Object.assign(params, {
     certificatesNo: "",
     certificatesType: "",
@@ -206,18 +193,13 @@ const reset = () => {
 
 //提交按钮的回调
 const submit = async () => {
-  //全部的表单校验通过返回一个成功的promise
-  //如果有一个表单校验失败返回的是一个失败的promise对象,后面的语句就不在执行了
-  await form.value.validate();
   try {
     //认证成功
     await reqUserCertation(params);
-    //提示消息
     ElMessage({
       type: "success",
       message: "认证成功",
     });
-    //认证成功以后再次获取用户信息
     getUserInfo();
   } catch (error) {
     ElMessage({
@@ -229,7 +211,6 @@ const submit = async () => {
 
 //自定义校验规则姓名方法
 const validatorName = (rule: any, value: any, callBack: any) => {
-  //rule:即为当前校验字段的校验规则对象
   const reg = /^[\u00B7\u3007\u3400-\u4DBF\u4E00-\u9FFF\uE000-\uF8FF\uD840-\uD8C0\uDC00-\uDFFF\uF900-\uFAFF]+$/;
   if (reg.test(value)) {
     callBack();
@@ -267,8 +248,6 @@ const validatorUrl = (rule: any, value: any, callBack: any) => {
 };
 
 const rules = {
-  //用户姓名的校验规则
-  //required:true,代表当前字段务必进行校验
   name: [
     {
       required: true,

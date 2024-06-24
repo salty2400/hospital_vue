@@ -101,28 +101,18 @@ import type { UserResponseData, UserArr, DoctorInfoData } from "@/api/hospital/t
 import { useRoute, useRouter } from "vue-router";
 //@ts-ignore
 import { ElMessage } from "element-plus";
-//获取路由对象
 let $route = useRoute();
-//存储医生的信息
 let docInfo = ref<any>({});
-//获取路由器对象
 let $router = useRouter();
 
-//存储用户确定就诊人索引值
 let currentIndex = ref<number>(-1);
-//存储全部就诊人信息
 let userArr = ref<UserArr>([]);
-//组件挂载完毕获取数据
 onMounted(() => {
-  //获取就诊人信息
   fetchUserData();
-  //获取医生信息
   fetchInfo();
 });
 //获取就诊人信息
 const fetchUserData = async () => {
-  //获取就诊人信息:当前老师的这个账号下曾经已有四个就诊人信息
-  //如果你是新的账号切记在已经写好的项目中先注册几个就诊人信息
   let result: UserResponseData = await reqGetUser();
   if (result.code == 200) {
     userArr.value = result.data;
@@ -138,21 +128,15 @@ const fetchInfo = async () => {
 
 //点击就诊人子组件的的回调
 const changeIndex = (index: number) => {
-  //存储当前用户选中就诊人信息索引值
   currentIndex.value = index;
 };
 
 //确定挂号按钮的回调
 const submitOrder = async () => {
-  //医院编号
   let hoscode = docInfo.value.hoscode;
-  //医生的ID
   let scheduleId = docInfo.value.id;
-  //就诊人的ID
   let patientId = userArr.value[currentIndex.value].id;
-  //提交订单
   let result: SubmitOrder = await reqSubmitOrder(hoscode, scheduleId, patientId);
-  //提交订单成功
   if (result.code == 200) {
     $router.push({ path: "/user/order", query: { orderId: result.data } });
   } else {
@@ -165,7 +149,6 @@ const submitOrder = async () => {
 
 //预约挂号添加就诊人按钮的方法
 const goUser = ()=>{
-   //路由跳转
    $router.push({path:'/user/patient',query:{type:'add'}})
 }
 </script>

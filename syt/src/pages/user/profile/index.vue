@@ -1,6 +1,6 @@
 <template>
     <div>
-       账号信息
+        <el-empty description="暂无信息" />
     </div>
 </template>
 

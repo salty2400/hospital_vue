@@ -189,21 +189,13 @@ import type {
   HospitalWordData,
   DoctorResponseData,
 } from "@/api/hospital/type";
-//获取路由对象
 let $route = useRoute();
-//获取路由器对象
 let $router = useRouter();
-//分页器当前页码
 let pageNo = ref<number>(1);
-//每一页展示几条数据
 let limit = ref<number>(6);
-//存储医院科室挂号的数据
 let workData = ref<any>({});
-//存储排班日期:当前数据的第一个
 let workTime: any = ref({});
-//存储排班医生的数据
 let docArr = ref<DocArr>([]);
-//组件挂载完毕发一次请求
 onMounted(() => {
   fetchWorkData();
 });
@@ -217,22 +209,16 @@ const fetchWorkData = async () => {
   );
   if (result.code == 200) {
     workData.value = result.data;
-    //存储第一天日期的数据
     workTime.value = workData.value.bookingScheduleList[0];
-    //获取一次医生的数据
     getDoctorWorkData();
   }
 };
 
 //获取某一天医生排班的数据
 const getDoctorWorkData = async () => {
-  //医院的编号
   let hoscode: string = $route.query.hoscode as string;
-  //科室的编号
   let depcode: string = $route.query.depcode as string;
-  //时间
   let workDate: string = workTime.value.workDate;
-  //获取排班医生的数据
   let result: DoctorResponseData = await reqHospitalDoctor(hoscode, depcode, workDate);
   if (result.code == 200) {
     docArr.value = result.data;
@@ -241,9 +227,7 @@ const getDoctorWorkData = async () => {
 
 //点击顶部某一天的时候触发回调
 const changeTime = (item: any) => {
-  //存储用户选择那一天的数据
   workTime.value = item;
-  //再发一次获取医生排班的数据
   getDoctorWorkData();
 };
 
@@ -262,7 +246,6 @@ let afterArr = computed(() => {
 
 //路由跳转进入到选择就诊人页面
 const goStep2 = (doctor: Doctor) => {
-  //编程式导航进行路由跳转且携带医生的ID
   $router.push({ path: "/hospital/register_step2", query: { docId: doctor.id } });
 };
 </script>

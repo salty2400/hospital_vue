@@ -18,20 +18,15 @@ import type {
   HospitalLevelAndRegionResponseData,
   HospitalLevelAndRegionArr,
 } from "@/api/home/type";
-//定义一个数组存储医院等级数据
 let levelArr = ref<HospitalLevelAndRegionArr>([]);
-//控制医院等级高亮响应式数据
 let activeFlag = ref<string>('');
-//组件挂载完毕
 onMounted(() => {
   getLevel();
 });
-//获取医院等级的数据
 const getLevel = async () => {
   let result: HospitalLevelAndRegionResponseData = await reqHospitalLevelAndRegion(
     "HosType"
   );
-  //存储医院等级的数据
   if (result.code == 200) {
     levelArr.value = result.data;
   }
@@ -39,9 +34,7 @@ const getLevel = async () => {
 
 //点击等级的按钮回调
 const changeLevel = (level:string)=>{
-   //高亮响应式数据存储leve数值
    activeFlag.value = level;
-   //触发自定义事件:将医院等级参数回传给父组件
    $emit('getLevel',level);
 }
 

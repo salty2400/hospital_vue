@@ -62,21 +62,14 @@ import { onMounted } from "vue";
 import useDetailStore from "@/store/modules/hospitalDetail";
 //获取仓库对象
 let detailStore = useDetailStore();
-//获取路由器
 let $router = useRouter();
-//获取当前路由的信息
 let $route = useRoute();
-//左侧菜单点击事件的回调
 const changeActive = (path: string) => {
-  //跳转到对应二级路由
   $router.push({ path, query: { hoscode: $route.query.hoscode } });
 };
 
-//组件挂载完毕:通知pinia仓库发请求获取医院详情的数据，存储仓库当中
 onMounted(() => {
-  //获取医院详情的数据
   detailStore.getHospital($route.query.hoscode as string);
-  //获取某一个医院科室的数据
   detailStore.getDeparment($route.query.hoscode as string);
 });
 </script>

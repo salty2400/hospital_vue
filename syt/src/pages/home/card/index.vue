@@ -63,13 +63,10 @@
 
 <script setup lang="ts">
 import { useRouter } from "vue-router";
-//获取路由器对象
 let $router = useRouter();
-//点击医院卡片的时候跳转到医院详情页面
 const goDetail = () => {
   $router.push({ path: "/hospital/register",query:{hoscode:props.hospitalInfo.hoscode}});
 };
-//接受父组件传递过来的props->即为已有的医院的数据
 let props = defineProps(["hospitalInfo"]);
 </script>
 

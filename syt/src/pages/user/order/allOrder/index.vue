@@ -70,30 +70,19 @@ import { reqUserOrderInfo, reqAllUser, reqOrderState } from "@/api/user";
 import { useRouter } from "vue-router";
 //获取路由器对象
 let $router = useRouter();
-//引入ts类型
-//当前分页器页码
 let pageNo = ref<number>(1);
-//当前页码展示几条数据
 let pageSize = ref<number>(10);
-//收集就诊人的ID
 let patientId = ref<string>("");
-//订单的状态
 let orderStatus = ref<string>("");
-//存储全部的订单
 let allOrderArr = ref<Records>([]);
-//存储订单的总个数
 let total = ref<number>(0);
-//存储全部就诊人的信息
 let allUser = ref<AllUser>([]);
-//存储全部订单的状态
 let allOrderState = ref<AllOrderState>([]);
-//组件挂载完毕的钩子
 onMounted(() => {
-  //获取订单的方法
   getOrderInfo();
-  //获取全部就诊人的信息以及获取全部的订单的状态
   getData();
 });
+
 //获取订单的方法
 const getOrderInfo = async (pager: number = 1) => {
   pageNo.value = pager;
@@ -119,9 +108,7 @@ const handler = (pageSizes: number) => {
 };
 //获取就诊人与订单状态接口方法
 const getData = async () => {
-  //获取全部的就诊人信息
   const result: AllUserResponseData = await reqAllUser();
-  //获取全部的订单状态
   const result1: AllOrderStateResponseData = await reqOrderState();
   allUser.value = result.data;
   allOrderState.value = result1.data;
@@ -129,7 +116,6 @@ const getData = async () => {
 
 //就诊人下拉菜单回调方法
 const changeUser = () => {
-  //根据就诊人的ID再次获取挂号订单的数据
   getOrderInfo();
 };
 //订单状态下拉菜单回调

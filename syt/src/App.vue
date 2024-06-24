@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-//引入用户仓库
+
 import useUserStore from "@/store/modules/user";
 let userStore = useUserStore();
 </script>
